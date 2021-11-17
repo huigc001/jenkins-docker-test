@@ -45,7 +45,7 @@ pipeline {
 		stage('Build Docker Image') {
             steps{
                 script{
-                    dockerImage = docker.build("jenkins-docker-test:${env.BUILD_TAG}")
+                    sh "docker build . -t demo-app"
                 }
             }
         }
