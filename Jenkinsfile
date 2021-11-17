@@ -45,21 +45,9 @@ pipeline {
 		stage('Build Docker Image') {
             steps{
                 script{
-                    dockerImage = docker.build("softwarehandwerk/sample-docker-java-app:${env.BUILD_TAG}")
+                    dockerImage = docker.build("jenkins-docker-test:${env.BUILD_TAG}")
                 }
             }
         }
-
-        stage('Push Docker Image') {
-            steps{
-                script{
-                    docker.withRegistry('','dockerhub-credentials-id'){
-                        dockerImage.push()
-                        dockerImage.push('latest')
-                    }
-                }
-            }
-        }
-
 	}
 }
