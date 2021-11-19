@@ -1,8 +1,8 @@
 version: "2"
 services:
-  demo-service:
-    container_name: demo-service
+  test-pipeline:
+    container_name: test-pipeline
     build: .
-    image: demo-service
+    image: test-pipeline
     ports:
       - 9999:9999
