@@ -2,7 +2,7 @@ pipeline {
     agent any
 
 	environment {
-		name = "api-gateway"
+		name = "demo-service"
 		dockerHome = tool 'JenkinsDocker'
 		mavenHome = tool 'JenkinsMaven'
 		PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
