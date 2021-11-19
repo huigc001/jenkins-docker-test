@@ -1,0 +1,8 @@
+version: "2"
+services:
+  demo-service:
+    container_name: demo-service
+    build: .
+    image: demo-service
+    ports:
+      - 9999:9999
