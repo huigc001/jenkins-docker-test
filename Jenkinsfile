@@ -2,6 +2,7 @@ pipeline {
     agent any
 
 	environment {
+		name = "demo-service"
 		dockerHome = tool 'JenkinsDocker'
 		mavenHome = tool 'JenkinsMaven'
 		PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
@@ -10,51 +11,52 @@ pipeline {
 	stages{
 		stage('Checkout') {
 			steps{
-				slackSend message: 'Checking out...'
+				slackSend message: "Pipeline Started: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
 				sh "mvn --version"
 				sh "docker version"
 				echo "PATH - $PATH"
 			}
 		}
 
-		stage('Compile') {
+		stage('Build') {
 			steps{
-				slackSend message: 'Compiling...'
 				sh "mvn clean compile"
+				sh "mvn package -DskipTests"
 			}
 		}
 
-		stage('Test') {
+		stage('Unit Test') {
 			steps{
-				slackSend message: 'Testing...'
+				echo "Unit-Tests, Static Code Analysis etc."
 				sh "mvn test"
 			}
 		}
 
-		stage('Integration Test') {
-			steps{
-				slackSend message: 'Integration Testing...'
-				sh "mvn failsafe:integration-test failsafe:verify"
-			}
-		}
-
-		stage('Package') {
-			steps{
-				script{
-					slackSend message: 'Packaging...'
-					sh "mvn package -DskipTests"
-				}
-			}
-		}
-
-		stage('Build Docker Image') {
+		stage('Deploy') {
             steps{
                 script{
-					slackSend message: 'Building Docker Image...'
-					sh "pwd"
-                    sh "docker build . -t demo-app"
+                    sh "docker build . -t $name"
+					sh "docker-compose up -d"
                 }
             }
         }
+
+
+		stage('Security Test') {
+            steps{
+                script{
+                    echo "Dynamic Security Analysis will be done here later on !"
+                }
+            }
+        }
+	}
+
+	post {
+		success {
+				slackSend message: "DEPLOYED - ${env.JOB_NAME} - ${env.BUILD_NUMBER}", color: good
+		}
+		failure {
+				slackSend message: "FAILED - ${env.JOB_NAME} - ${env.BUILD_NUMBER}", color: danger
+		}
 	}
 }
