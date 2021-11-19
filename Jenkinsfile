@@ -2,7 +2,7 @@ pipeline {
     agent any
 
 	environment {
-		name = "demo-service"
+		name = "api-gateway"
 		dockerHome = tool 'JenkinsDocker'
 		mavenHome = tool 'JenkinsMaven'
 		PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
@@ -52,11 +52,13 @@ pipeline {
 	}
 
 	post {
-		success {
-				slackSend message: "DEPLOYED - ${env.JOB_NAME} - ${env.BUILD_NUMBER}", color: good
-		}
-		failure {
-				slackSend message: "FAILED - ${env.JOB_NAME} - ${env.BUILD_NUMBER}", color: danger
+		always{
+			success {
+					slackSend message: "DEPLOYED - ${env.JOB_NAME} - ${env.BUILD_NUMBER}", color: good
+			}
+			failure {
+					slackSend message: "FAILED - ${env.JOB_NAME} - ${env.BUILD_NUMBER}", color: danger
+			}
 		}
 	}
 }
